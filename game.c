@@ -39,9 +39,9 @@
 #include "oldrunner.h"
 
 #ifdef LEVELS_PATH
-#  define  LEVELS  LEVELS_PATH "/original.lvl"
+#  define  LEVELS  LEVELS_PATH "/oldrunner.lvl"
 #else
-#  define  LEVELS  "./levels/original.lvl"
+#  define  LEVELS  "./levels/oldrunner.lvl"
 #endif
 
 #define  POINTS_FOR_MONEY  50
