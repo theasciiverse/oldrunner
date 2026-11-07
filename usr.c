@@ -34,6 +34,18 @@
 
 #include "oldrunner.h"
 
+#ifdef HAVE_CURSES_H
+#  include <curses.h>
+#elif defined HAVE_NCURSES_H
+#  include <ncurses.h>
+#elif defined HAVE_NCURSES_NCURSES_H
+#  include <ncurses/ncurses.h>
+#elif defined HAVE_NCURSESW_NCURSES_H
+#  include <ncursesw/ncurses.h>
+#else
+#  error "Missing curses library header. Aborting..."
+#endif
+
 #define ORKEY_NONE  -1
 #define USER_DELAY  OLDRUNNER_TIMEOUT
 
@@ -68,25 +80,36 @@ usr_input (void)
       switch (rec_input.key)
         {
         case ORKEY_EXIT:
+        case ORKEY_QUIT:
           return;
 
+        case KEY_RESIZE:
+          gfx_resize ();
+          break;
+
         case ORKEY_MOVE_RIGHT:
+        case KEY_RIGHT:
           hero_move (MOV_RIGHT);
           break;
         case ORKEY_MOVE_LEFT:
+        case KEY_LEFT:
           hero_move (MOV_LEFT);
           break;
         case ORKEY_MOVE_UP:
+        case KEY_UP:
           hero_move (MOV_UP);
           break;
         case ORKEY_MOVE_DOWN:
+        case KEY_DOWN:
           hero_move (MOV_DOWN);
           break;
 
         case ORKEY_DIG_LEFT:
+        case ORKEY_DIG_LEFT2:
           hero_dig (MOV_LEFT);
           break;
         case ORKEY_DIG_RIGHT:
+        case ORKEY_DIG_RIGHT2:
           hero_dig (MOV_RIGHT);
           break;
 

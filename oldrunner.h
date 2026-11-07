@@ -182,6 +182,7 @@ void      game_won (void);
 void      game_init (int);
 void      game_end (void);
 void      game_update (void);
+void      game_redraw_info (void);
 unsigned  game_load (const char *);
 void      game_score_inc (void);
 int       game_level_num (void);
@@ -194,6 +195,7 @@ void      game_lives_dec (void);
 void  gfx_init (void);
 void  gfx_end (void);
 void  gfx_alert (void);
+void  gfx_resize (void);
 void  gfx_center_at (struct coord *);
 void  gfx_update (void);
 void  gfx_get_input (struct usr_input *);
@@ -221,6 +223,7 @@ unsigned  hero_wallup_at (const struct coord *);
 
 /* io.c */
 FILE  *io_fopen (const char *);
+FILE  *io_fopen_levels (void);
 void   io_fclose (FILE *);
 char  *io_getln (FILE *);
 

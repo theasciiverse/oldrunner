@@ -2,3 +2,7 @@
 /config.h
 /config.mk
 /oldrunner
+levels_data.c
+tools/__pycache__/
+stage/
+dist/

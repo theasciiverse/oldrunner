@@ -32,6 +32,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <locale.h>
 #include <string.h>
 
 #include "oldrunner.h"
@@ -108,7 +109,8 @@ screen_init (void)
   scr.view.p = newwin (scr.view.siz.h, scr.view.siz.w,
                        scr.view.pos.y, scr.view.pos.x);
   keypad (scr.view.p, TRUE);  /* Enable function and arrow keys. */
-  nodelay (scr.view.p, TRUE);
+  /* wait up to 10 ms for a key, instead of polling and using a whole CPU */
+  wtimeout (scr.view.p, 10);
   box (scr.view.p, 0, 0);
   wnoutrefresh (scr.view.p);
 }
@@ -155,7 +157,9 @@ showpopup (struct window *pop)
 void
 gfx_init (void)
 {
-  /* Curses initialization. */
+  /* Curses initialization, in the terminal's own character set so the
+     line-drawing characters come out right in UTF-8 terminals. */
+  setlocale (LC_ALL, "");
   initscr ();                   /* start the curses mode */
   cbreak ();                    /* control chars generate a signal */
   noecho ();                    /* controls echoing of typed chars */
@@ -174,6 +178,25 @@ gfx_end (void)
   delwin (scr.pad.p);
   delwin (scr.view.p);
   endwin ();
+}
+
+/*
+ * The terminal changed size: put the game window back in the middle and
+ * draw it again.
+ */
+void
+gfx_resize (void)
+{
+  werase (stdscr);
+  wnoutrefresh (stdscr);
+  screen_init_size ();
+  mvwin (scr.view.p, scr.view.pos.y, scr.view.pos.x);
+  werase (scr.view.p);
+  box (scr.view.p, 0, 0);
+  wnoutrefresh (scr.view.p);
+  game_redraw_info ();
+  screen_update ();
+  doupdate ();
 }
 
 void
@@ -257,19 +280,19 @@ gfx_update_info (const struct game_info *info)
 
   if (info->state & SCORE_CHANGE)
     wattron (scr.view.p, HIGHLIGHT);
-  mvwprintw (scr.view.p, yoff, xoff, score);
+  mvwprintw (scr.view.p, yoff, xoff, "%s", score);
   if (info->state & SCORE_CHANGE)
     wattroff (scr.view.p, HIGHLIGHT);
 
   if (info->state & LIVES_CHANGE)
     wattron (scr.view.p, HIGHLIGHT);
-  mvwprintw (scr.view.p, yoff, score_len + 2 * xoff, lives);
+  mvwprintw (scr.view.p, yoff, score_len + 2 * xoff, "%s", lives);
   if (info->state & LIVES_CHANGE)
     wattroff (scr.view.p, HIGHLIGHT);
 
   if (info->state & LEVEL_CHANGE)
     wattron (scr.view.p, HIGHLIGHT);
-  mvwprintw (scr.view.p, yoff, score_len + lives_len + 3 * xoff, level);
+  mvwprintw (scr.view.p, yoff, score_len + lives_len + 3 * xoff, "%s", level);
   if (info->state & LEVEL_CHANGE)
     wattroff (scr.view.p, HIGHLIGHT);
 

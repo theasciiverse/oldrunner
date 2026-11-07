@@ -53,6 +53,24 @@ io_fopen (const char *path)
   return f;
 }
 
+/* levels/oldrunner.lvl, built in by levels_data.c */
+extern const char oldrunner_lvl[];
+extern const unsigned long oldrunner_lvl_len;
+
+FILE *
+io_fopen_levels (void)
+{
+  FILE *f;
+
+  if (!(f = fmemopen ((void *)oldrunner_lvl, oldrunner_lvl_len, "r")))
+    {
+      ERROR_MSG ("Could not read the built-in levels: %s", strerror (errno));
+      return 0;
+    }
+
+  return f;
+}
+
 static char *line;
 
 void

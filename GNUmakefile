@@ -2,7 +2,7 @@
 
 VERSION=        20120131
 
-PRJ=		$(shell basename `pwd`)
+PRJ=		oldrunner
 EXE=		$(PRJ)
 BAK=		$(PRJ)-$(shell date '+%Y%m%d-%H%M').tar.gz
 PKG=		$(PRJ)-$(VERSION).tar.gz
@@ -19,7 +19,7 @@ ifdef FDEBUG
 CFLAGS+= -g -ggdb -DDEBUG
 endif
 
-SRCS=		$(wildcard $(SRCDIR)/*.c)
+SRCS=		$(filter-out %levels_data.c,$(wildcard $(SRCDIR)/*.c)) levels_data.c
 -include config.mk
 OBJ=		$(SRCS:.c=.o)
 
@@ -28,6 +28,10 @@ all:	$(EXE)
 
 $(EXE):	$(OBJ)
 	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+# the levels, built into the binary (io_fopen_levels)
+levels_data.c: levels/oldrunner.lvl
+	sh tools/levels_data.sh levels/oldrunner.lvl > $@
 
 %.o:	%.c
 	$(CC) $(CFLAGS) -o $@ -c $<
@@ -44,7 +48,7 @@ clean-all: clean
 	@rm -f config.mk config.h TAGS
 
 clean:
-	@rm -f $(OBJ) $(EXE)
+	@rm -f $(OBJ) $(EXE) levels_data.c
 	@rm -f core
 	@rm -f *.gz
 	@echo "==> Project cleaned"

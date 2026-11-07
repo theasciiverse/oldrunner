@@ -47,6 +47,9 @@
 #define ORKEY_MOVE_UP        'k'
 #define ORKEY_DIG_LEFT       's'
 #define ORKEY_DIG_RIGHT      'd'
+#define ORKEY_DIG_LEFT2      'z'
+#define ORKEY_DIG_RIGHT2     'x'
+#define ORKEY_QUIT           'q'
 #define ORKEY_LEVEL_NEXT     CTRL('n')
 #define ORKEY_LEVEL_PREV     CTRL('p')
 #define ORKEY_SUICIDE        CTRL('g')

@@ -38,10 +38,12 @@
 
 #include "oldrunner.h"
 
+/* The levels are built into the binary (levels_data.c, made from
+   levels/oldrunner.lvl); LEVELS_PATH reads them from a file instead. */
 #ifdef LEVELS_PATH
 #  define  LEVELS  LEVELS_PATH "/oldrunner.lvl"
 #else
-#  define  LEVELS  "./levels/oldrunner.lvl"
+#  define  LEVELS  0
 #endif
 
 #define  POINTS_FOR_MONEY  50
@@ -125,6 +127,16 @@ game_update (void)
   gfx_update ();
 }
 
+/* Draws the score, lives and level again, after a resize. */
+void
+game_redraw_info (void)
+{
+  struct game_info info = ginfo;
+
+  info.state = NO_CHANGE;
+  gfx_update_info (&info);
+}
+
 void
 game_end (void)
 {
@@ -204,7 +216,7 @@ game_load (const char *path)
   char *buf;
   unsigned rownum, newlevel;
 
-  if (!(f = io_fopen (LEVELS)))
+  if (!(f = path ? io_fopen (path) : io_fopen_levels ()))
     return 0;
 
   newlevel = 1;
