@@ -94,15 +94,19 @@ def check(lv):
             errs.append(f'no way out after gold at row {p[0]} col {p[1]}')
     return errs, len(gold), foes
 
-ok = True
-for n, lv in enumerate(parse(sys.argv[1])):
-    if lv.get('w') == 0:
-        continue
-    res = check(lv)
-    if isinstance(res, list):
-        errs, ng, nf = res, 0, 0
-    else:
-        errs, ng, nf = res
-    print(f"{n:3} {lv['name']:<28} gold {ng:2} foes {nf}  " + ('ok' if not errs else '; '.join(errs)))
-    ok &= not errs
-sys.exit(0 if ok else 1)
+def main():
+    ok = True
+    for n, lv in enumerate(parse(sys.argv[1])):
+        if lv.get('w') == 0:
+            continue
+        res = check(lv)
+        if isinstance(res, list):
+            errs, ng, nf = res, 0, 0
+        else:
+            errs, ng, nf = res
+        print(f"{n:3} {lv['name']:<28} gold {ng:2} foes {nf}  " + ('ok' if not errs else '; '.join(errs)))
+        ok &= not errs
+    sys.exit(0 if ok else 1)
+
+if __name__ == '__main__':
+    main()
